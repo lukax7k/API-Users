@@ -14,9 +14,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  email   String   @unique
-  name    String
-  age     String
+model ImobiliariaUser {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  password  String
+  favoritos String[] @default([])
+}
+
+model LojaUser {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  nome      String
+  senha     String
+  endereco  String?
+  carrinho  String[] @default([])
+  historico String[] @default([])
+}
+
+model BlogUser {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  nome     String
+  idade    Int
+  senha    String
 }
