@@ -17,25 +17,26 @@ app.use(cors());
 // ---------- Imobiliária ----------
 app.post('/imobiliaria-users', async (req, res) => {
   try {
-    const { name, senha } = req.body;
+    const { name, password } = req.body;
 
-    if (!name || !senha) {
+    if (!name || !password) {
       return res.status(400).json({ error: 'Nome e senha são obrigatórios.' });
     }
 
     const newUser = await prisma.imobiliariaUser.create({
       data: {
         name,
-        senha,
+        password,
         favoritos: []  // começa vazio
       }
     });
 
     res.status(201).json(newUser);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erro ao criar usuário.' });
-  }
+  console.error('Erro ao criar usuário:', error);
+  res.status(500).json({ error: 'Erro ao criar usuário.' });
+}
+
 });
 
 
