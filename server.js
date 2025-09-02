@@ -59,8 +59,8 @@ app.post('/loja/users', async (req, res) => {
 
     const newUser = await prisma.lojaUser.create({
       data: {
-        nome: name,           // mapeando para o campo do schema
-        senha: password,      // mapeando para o campo do schema
+        name,           // mapeando para o campo do schema
+        password,      // mapeando para o campo do schema
         endereco: endereco || null,
         carrinho: carrinho || [],
         historico: historico || []
@@ -87,17 +87,17 @@ app.get('/loja/users', async (req, res) => {
 // ---------- Blog ----------
 app.post('/blog/users', async (req, res) => {
   try {
-    const { name, password, idade } = req.body;
+    const { name, password, age } = req.body;
 
-    if (!name || !password || typeof idade !== 'number') {
+    if (!name || !password || typeof age !== 'number') {
       return res.status(400).json({ error: 'Nome, idade (número) e senha são obrigatórios.' });
     }
 
     const newUser = await prisma.blogUser.create({
       data: {
-        nome: name,         // mapeando para o campo do schema
-        idade,
-        senha: password     // mapeando para o campo do schema
+        name,         // mapeando para o campo do schema
+        age,
+        password     // mapeando para o campo do schema
       }
     });
 
