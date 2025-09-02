@@ -23,8 +23,8 @@ model ImobiliariaUser {
 
 model LojaUser {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  nome      String
-  senha     String
+  name      String
+  password  String
   endereco  String?
   carrinho  String[] @default([])
   historico String[] @default([])
@@ -32,7 +32,7 @@ model LojaUser {
 
 model BlogUser {
   id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  nome     String
-  idade    Int
-  senha    String
+  name     String
+  age      Int
+  password String
 }

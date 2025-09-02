@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cors());
 
 // ---------- Imobiliária ----------
-app.post('/imobiliaria-users', async (req, res) => {
+app.post('/imobiliaria/users', async (req, res) => {
   try {
     const { name, password } = req.body;
 
@@ -33,54 +33,89 @@ app.post('/imobiliaria-users', async (req, res) => {
 
     res.status(201).json(newUser);
   } catch (error) {
-  console.error('Erro ao criar usuário:', error);
-  res.status(500).json({ error: 'Erro ao criar usuário.' });
-}
-
+    console.error('Erro ao criar usuário imobiliária:', error);
+    res.status(500).json({ error: 'Erro ao criar usuário imobiliária.' });
+  }
 });
 
-
-
 app.get('/imobiliaria/users', async (req, res) => {
-  const users = await prisma.imobiliariaUser.findMany();
-  res.status(200).json(users);
+  try {
+    const users = await prisma.imobiliariaUser.findMany();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Erro ao buscar usuários imobiliária:', error);
+    res.status(500).json({ error: 'Erro ao buscar usuários imobiliária.' });
+  }
 });
 
 // ---------- Loja ----------
 app.post('/loja/users', async (req, res) => {
-  const user = await prisma.lojaUser.create({
-    data: {
-      nome: req.body.nome,
-      senha: req.body.senha,
-      endereco: req.body.endereco,
-      carrinho: req.body.carrinho || [],
-      historico: req.body.historico || []
+  try {
+    const { name, password, endereco, carrinho, historico } = req.body;
+
+    if (!name || !password) {
+      return res.status(400).json({ error: 'Nome e senha são obrigatórios.' });
     }
-  });
-  res.status(201).json(user);
+
+    const newUser = await prisma.lojaUser.create({
+      data: {
+        nome: name,           // mapeando para o campo do schema
+        senha: password,      // mapeando para o campo do schema
+        endereco: endereco || null,
+        carrinho: carrinho || [],
+        historico: historico || []
+      }
+    });
+
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error('Erro ao criar usuário loja:', error);
+    res.status(500).json({ error: 'Erro ao criar usuário loja.' });
+  }
 });
 
-
 app.get('/loja/users', async (req, res) => {
-  const users = await prisma.lojaUser.findMany();
-  res.status(200).json(users);
+  try {
+    const users = await prisma.lojaUser.findMany();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Erro ao buscar usuários loja:', error);
+    res.status(500).json({ error: 'Erro ao buscar usuários loja.' });
+  }
 });
 
 // ---------- Blog ----------
 app.post('/blog/users', async (req, res) => {
-  const user = await prisma.blogUser.create({
-    data: {
-      nome: req.body.nome,
-      idade: req.body.idade,
-      senha: req.body.senha
+  try {
+    const { name, password, idade } = req.body;
+
+    if (!name || !password || typeof idade !== 'number') {
+      return res.status(400).json({ error: 'Nome, idade (número) e senha são obrigatórios.' });
     }
-  });
-  res.status(201).json(user);
+
+    const newUser = await prisma.blogUser.create({
+      data: {
+        nome: name,         // mapeando para o campo do schema
+        idade,
+        senha: password     // mapeando para o campo do schema
+      }
+    });
+
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error('Erro ao criar usuário blog:', error);
+    res.status(500).json({ error: 'Erro ao criar usuário blog.' });
+  }
 });
 
 app.get('/blog/users', async (req, res) => {
-  const users = await prisma.blogUser.findMany();
-  res.status(200).json(users);
+  try {
+    const users = await prisma.blogUser.findMany();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Erro ao buscar usuários blog:', error);
+    res.status(500).json({ error: 'Erro ao buscar usuários blog.' });
+  }
 });
 
 // Inicia servidor
@@ -89,7 +124,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
-
 
 /*
 lucasfagundesm12
