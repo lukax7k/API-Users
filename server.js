@@ -110,6 +110,26 @@ app.post('/imobiliaria/login', async (req, res) => {
   }
 });
 
+// Buscar usuário imobiliária por ID
+app.get('/imobiliaria/users/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await prisma.imobiliariaUser.findUnique({
+      where: { id }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Erro ao buscar usuário imobiliária por ID:', error);
+    res.status(500).json({ error: 'Erro interno ao buscar usuário imobiliária.' });
+  }
+});
+
 
 // ========== LOJA ==========
 
