@@ -159,6 +159,30 @@ app.get('/loja/users', async (req, res) => {
   }
 });
 
+//Listar por id
+
+app.get('/loja/users/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await prisma.lojaUser.findUnique({
+      where: {
+        id: Number(id), // ou String, dependendo do tipo no banco
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Erro ao buscar usuário por ID:', error);
+    res.status(500).json({ error: 'Erro ao buscar usuário.' });
+  }
+});
+
+
 // Editar
 app.put('/loja/users/:id', async (req, res) => {
   try {
