@@ -176,7 +176,7 @@ app.post('/blog/users', async (req, res) => {
       data: {
         name,
         password,
-        idade: age
+        age
       }
     });
 
@@ -209,7 +209,7 @@ app.put('/blog/users/:id', async (req, res) => {
       data: {
         name,
         password,
-        idade: age
+        age
       }
     });
 
