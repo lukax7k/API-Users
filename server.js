@@ -243,6 +243,93 @@ app.post('/loja/login', async (req, res) => {
   }
 });
 
+// Adicionar produto ao carrinho
+app.post('/loja/users/:id/carrinho', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { produto } = req.body;
+
+    if (!produto) {
+      return res.status(400).json({ error: 'Produto é obrigatório.' });
+    }
+
+    const produtoString = JSON.stringify(produto);
+
+    const user = await prisma.lojaUser.update({
+      where: { id },
+      data: {
+        carrinho: {
+          push: produtoString,
+        }
+      }
+    });
+
+    res.status(200).json({ message: 'Produto adicionado ao carrinho.', carrinho: user.carrinho });
+  } catch (error) {
+    console.error('Erro ao adicionar produto ao carrinho:', error);
+    res.status(500).json({ error: 'Erro ao adicionar produto ao carrinho.' });
+  }
+});
+
+// Buscar carrinho do usuário
+app.get('/loja/users/:id/carrinho', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await prisma.lojaUser.findUnique({
+      where: { id }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    // Converter itens do carrinho de string para objeto
+    const carrinho = user.carrinho.map(item => {
+      try {
+        return JSON.parse(item);
+      } catch {
+        return item; // fallback
+      }
+    });
+
+    res.status(200).json({ carrinho });
+  } catch (error) {
+    console.error('Erro ao buscar carrinho:', error);
+    res.status(500).json({ error: 'Erro ao buscar carrinho.' });
+  }
+});
+
+// Remover item do carrinho por índice
+app.delete('/loja/users/:id/carrinho/:index', async (req, res) => {
+  try {
+    const { id, index } = req.params;
+
+    const user = await prisma.lojaUser.findUnique({ where: { id } });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    const idx = parseInt(index);
+    if (isNaN(idx) || idx < 0 || idx >= user.carrinho.length) {
+      return res.status(400).json({ error: 'Índice inválido.' });
+    }
+
+    const novoCarrinho = [...user.carrinho];
+    novoCarrinho.splice(idx, 1);
+
+    const updatedUser = await prisma.lojaUser.update({
+      where: { id },
+      data: { carrinho: novoCarrinho }
+    });
+
+    res.status(200).json({ message: 'Item removido do carrinho.', carrinho: updatedUser.carrinho });
+  } catch (error) {
+    console.error('Erro ao remover item do carrinho:', error);
+    res.status(500).json({ error: 'Erro ao remover item do carrinho.' });
+  }
+});
 
 
 // ========== BLOG ==========
