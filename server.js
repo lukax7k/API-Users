@@ -14,7 +14,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ---------- Imobiliária ----------
+
+// ========== IMOBILIÁRIA ==========
+
+// Criar
 app.post('/imobiliaria/users', async (req, res) => {
   try {
     const { name, password } = req.body;
@@ -27,7 +30,7 @@ app.post('/imobiliaria/users', async (req, res) => {
       data: {
         name,
         password,
-        favoritos: []  // começa vazio
+        favoritos: []
       }
     });
 
@@ -38,6 +41,7 @@ app.post('/imobiliaria/users', async (req, res) => {
   }
 });
 
+// Listar
 app.get('/imobiliaria/users', async (req, res) => {
   try {
     const users = await prisma.imobiliariaUser.findMany();
@@ -48,7 +52,41 @@ app.get('/imobiliaria/users', async (req, res) => {
   }
 });
 
-// ---------- Loja ----------
+// Editar
+app.put('/imobiliaria/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, password, favoritos } = req.body;
+
+    const updatedUser = await prisma.imobiliariaUser.update({
+      where: { id },
+      data: { name, password, favoritos }
+    });
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error('Erro ao editar usuário imobiliária:', error);
+    res.status(500).json({ error: 'Erro ao editar usuário imobiliária.' });
+  }
+});
+
+// Deletar
+app.delete('/imobiliaria/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.imobiliariaUser.delete({ where: { id } });
+    res.status(204).send(); // sem conteúdo
+  } catch (error) {
+    console.error('Erro ao deletar usuário imobiliária:', error);
+    res.status(500).json({ error: 'Erro ao deletar usuário imobiliária.' });
+  }
+});
+
+
+// ========== LOJA ==========
+
+// Criar
 app.post('/loja/users', async (req, res) => {
   try {
     const { name, password, endereco, carrinho, historico } = req.body;
@@ -59,8 +97,8 @@ app.post('/loja/users', async (req, res) => {
 
     const newUser = await prisma.lojaUser.create({
       data: {
-        name,           // mapeando para o campo do schema
-        password,      // mapeando para o campo do schema
+        name,
+        password,
         endereco: endereco || null,
         carrinho: carrinho || [],
         historico: historico || []
@@ -74,6 +112,7 @@ app.post('/loja/users', async (req, res) => {
   }
 });
 
+// Listar
 app.get('/loja/users', async (req, res) => {
   try {
     const users = await prisma.lojaUser.findMany();
@@ -84,7 +123,47 @@ app.get('/loja/users', async (req, res) => {
   }
 });
 
-// ---------- Blog ----------
+// Editar
+app.put('/loja/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, password, endereco, carrinho, historico } = req.body;
+
+    const updatedUser = await prisma.lojaUser.update({
+      where: { id },
+      data: {
+        name,
+        password,
+        endereco,
+        carrinho,
+        historico
+      }
+    });
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error('Erro ao editar usuário loja:', error);
+    res.status(500).json({ error: 'Erro ao editar usuário loja.' });
+  }
+});
+
+// Deletar
+app.delete('/loja/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.lojaUser.delete({ where: { id } });
+    res.status(204).send();
+  } catch (error) {
+    console.error('Erro ao deletar usuário loja:', error);
+    res.status(500).json({ error: 'Erro ao deletar usuário loja.' });
+  }
+});
+
+
+// ========== BLOG ==========
+
+// Criar
 app.post('/blog/users', async (req, res) => {
   try {
     const { name, password, age } = req.body;
@@ -95,9 +174,9 @@ app.post('/blog/users', async (req, res) => {
 
     const newUser = await prisma.blogUser.create({
       data: {
-        name,         // mapeando para o campo do schema
-        age,
-        password     // mapeando para o campo do schema
+        name,
+        password,
+        idade: age
       }
     });
 
@@ -108,6 +187,7 @@ app.post('/blog/users', async (req, res) => {
   }
 });
 
+// Listar
 app.get('/blog/users', async (req, res) => {
   try {
     const users = await prisma.blogUser.findMany();
@@ -118,12 +198,50 @@ app.get('/blog/users', async (req, res) => {
   }
 });
 
-// Inicia servidor
+// Editar
+app.put('/blog/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, password, age } = req.body;
+
+    const updatedUser = await prisma.blogUser.update({
+      where: { id },
+      data: {
+        name,
+        password,
+        idade: age
+      }
+    });
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error('Erro ao editar usuário blog:', error);
+    res.status(500).json({ error: 'Erro ao editar usuário blog.' });
+  }
+});
+
+// Deletar
+app.delete('/blog/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.blogUser.delete({ where: { id } });
+    res.status(204).send();
+  } catch (error) {
+    console.error('Erro ao deletar usuário blog:', error);
+    res.status(500).json({ error: 'Erro ao deletar usuário blog.' });
+  }
+});
+
+
+// ========== SERVIDOR ==========
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
+
 
 /*
 lucasfagundesm12
