@@ -138,8 +138,13 @@ app.post('/loja/users', async (req, res) => {
 
     res.status(201).json(newUser);
   } catch (error) {
-    console.error('Erro ao criar usuário loja:', error);
-    res.status(500).json({ error: 'Erro ao criar usuário loja.' });
+    // 👇 Trate o erro específico de duplicidade (usuário já existe)
+    if (error.code === 'P2002' && error.meta?.target?.includes('name')) {
+      return res.status(409).json({ error: 'Nome de usuário já cadastrado.' });
+    }
+
+    console.error('Erro ao criar usuário imobiliária:', error);
+    res.status(500).json({ error: 'Erro ao criar usuário imobiliária.' });
   }
 });
 
