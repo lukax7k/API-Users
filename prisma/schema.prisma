@@ -16,14 +16,14 @@ datasource db {
 
 model ImobiliariaUser {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
+  name      String   @unique
   password  String
   favoritos String[] @default([])
 }
 
 model LojaUser {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
+  name      String   @unique
   password  String
   endereco  String?
   carrinho  String[] @default([])
@@ -32,7 +32,7 @@ model LojaUser {
 
 model BlogUser {
   id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
+  name     String   @unique
   age      Int
   password String
 }

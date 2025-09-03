@@ -26,6 +26,10 @@ app.post('/imobiliaria/users', async (req, res) => {
       return res.status(400).json({ error: 'Nome e senha são obrigatórios.' });
     }
 
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'A senha deve ter no mínimo 6 caracteres.' });
+    }
+
     const newUser = await prisma.imobiliariaUser.create({
       data: {
         name,
@@ -83,6 +87,29 @@ app.delete('/imobiliaria/users/:id', async (req, res) => {
   }
 });
 
+// Login Imobiliária
+app.post('/imobiliaria/login', async (req, res) => {
+  try {
+    const { name, password } = req.body;
+
+    if (!name || !password) {
+      return res.status(400).json({ error: 'Nome e senha são obrigatórios.' });
+    }
+
+    const user = await prisma.imobiliariaUser.findUnique({ where: { name } });
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({ error: 'Nome ou senha inválidos.' });
+    }
+
+    // Aqui você poderia gerar token JWT, etc.
+    res.status(200).json({ message: 'Login realizado com sucesso', user: { id: user.id, name: user.name } });
+  } catch (error) {
+    console.error('Erro no login imobiliária:', error);
+    res.status(500).json({ error: 'Erro no login imobiliária.' });
+  }
+});
+
 
 // ========== LOJA ==========
 
@@ -93,6 +120,10 @@ app.post('/loja/users', async (req, res) => {
 
     if (!name || !password) {
       return res.status(400).json({ error: 'Nome e senha são obrigatórios.' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'A senha deve ter no mínimo 6 caracteres.' });
     }
 
     const newUser = await prisma.lojaUser.create({
@@ -160,6 +191,29 @@ app.delete('/loja/users/:id', async (req, res) => {
   }
 });
 
+// Login Loja
+app.post('/loja/login', async (req, res) => {
+  try {
+    const { name, password } = req.body;
+
+    if (!name || !password) {
+      return res.status(400).json({ error: 'Nome e senha são obrigatórios.' });
+    }
+
+    const user = await prisma.lojaUser.findUnique({ where: { name } });
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({ error: 'Nome ou senha inválidos.' });
+    }
+
+    res.status(200).json({ message: 'Login realizado com sucesso', user: { id: user.id, name: user.name } });
+  } catch (error) {
+    console.error('Erro no login loja:', error);
+    res.status(500).json({ error: 'Erro no login loja.' });
+  }
+});
+
+
 
 // ========== BLOG ==========
 
@@ -170,6 +224,10 @@ app.post('/blog/users', async (req, res) => {
 
     if (!name || !password || typeof age !== 'number') {
       return res.status(400).json({ error: 'Nome, idade (número) e senha são obrigatórios.' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'A senha deve ter no mínimo 6 caracteres.' });
     }
 
     const newUser = await prisma.blogUser.create({
@@ -233,6 +291,27 @@ app.delete('/blog/users/:id', async (req, res) => {
   }
 });
 
+// Login Blog
+app.post('/blog/login', async (req, res) => {
+  try {
+    const { name, password } = req.body;
+
+    if (!name || !password) {
+      return res.status(400).json({ error: 'Nome e senha são obrigatórios.' });
+    }
+
+    const user = await prisma.blogUser.findUnique({ where: { name } });
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({ error: 'Nome ou senha inválidos.' });
+    }
+
+    res.status(200).json({ message: 'Login realizado com sucesso', user: { id: user.id, name: user.name } });
+  } catch (error) {
+    console.error('Erro no login blog:', error);
+    res.status(500).json({ error: 'Erro no login blog.' });
+  }
+});
 
 // ========== SERVIDOR ==========
 
