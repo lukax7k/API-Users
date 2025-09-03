@@ -167,7 +167,7 @@ app.get('/loja/users/:id', async (req, res) => {
   try {
     const user = await prisma.lojaUser.findUnique({
       where: {
-        id: Number(id), // ou String, dependendo do tipo no banco
+        id: String, // ou String, dependendo do tipo no banco
       },
     });
 
