@@ -167,7 +167,7 @@ app.get('/loja/users/:id', async (req, res) => {
   try {
     const user = await prisma.lojaUser.findUnique({
       where: {
-        id: String, // ou String, dependendo do tipo no banco
+        id: id, // ✅ usar como string
       },
     });
 
@@ -178,9 +178,10 @@ app.get('/loja/users/:id', async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     console.error('Erro ao buscar usuário por ID:', error);
-    res.status(500).json({ error: 'Erro ao buscar usuário.' });
+    res.status(500).json({ error: 'Erro interno ao buscar usuário.' });
   }
 });
+
 
 
 // Editar
